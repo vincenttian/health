@@ -11,8 +11,11 @@ http://mongoosejs.com/docs/
 Fitbit Passport:
 https://github.com/jaredhanson/passport-fitbit
 
+Fitbit API:
+https://www.npmjs.org/package/fitbit
+
 Jawbone Passport:
-https://www.npmjs.org/package/passport-jawbone
+https://github.com/maxutter/up-api-auth-demo
 
 ###MongoDB
 

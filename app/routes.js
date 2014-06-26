@@ -1,3 +1,5 @@
+var Fitbit = require('fitbit');
+
 module.exports = function(app, passport) {
 
     // normal routes ===============================================================
@@ -198,9 +200,14 @@ module.exports = function(app, passport) {
     // the callback after fitbit has authorized the user
     app.get('/connect/fitbit/callback',
         passport.authorize('fitbit', {
-            successRedirect: '/profile',
             failureRedirect: '/'
-        }));
+        }),
+        function(req, res) {
+        	console.log('GOT TO CONNECT FITBIT');
+        	console.log(req);
+        	console.log(res);
+            res.redirect('/profile');
+        });
 
     // jawbone ---------------------------------
 

@@ -1,3 +1,6 @@
+var Fitbit = require('fitbit');
+var client;
+
 // load all the things we need
 var LocalStrategy = require('passport-local').Strategy;
 var FacebookStrategy = require('passport-facebook').Strategy;
@@ -316,53 +319,92 @@ module.exports = function(passport) {
             consumerSecret: configAuth.fitbitAuth.clientSecret,
             callbackURL: configAuth.fitbitAuth.callbackURL
         },
-        function(req, token, tokenSecret, profile, done) {
+        function(token, tokenSecret, profile, done) {
+
+        	// console.log(profile); // includes date of birth, country, avatar, distance unit, gender, height, member since, stride length running, stride length walking, weight
+
+        	client = new Fitbit(
+				configAuth.fitbitAuth.clientID, 
+				configAuth.fitbitAuth.clientSecret, { // Now set with access tokens
+					accessToken: token, 
+					accessTokenSecret: tokenSecret, 
+					unitMeasure: 'en_US'
+				}
+			);
+
+			// Fetch todays activities
+			/*
+			client.getActivities(function (err, activities) {
+			    if (err) {
+			      console.log(err);
+			      return;
+			    }
+			    console.log(activities);
+			});
+
+			client.getDevices(function (err, devices) {
+			    if (err) {
+			      console.log(err);
+			      return;
+			    }
+			    console.log(devices);
+			});
+
+			client.getSleep(function (err, sleep) {
+			    if (err) {
+			      console.log(err);
+			      return;
+			    }
+			    console.log(sleep);
+			});
+			*/
+
+			/*
+			client.getbodymeasurements(function (err, sleep) {
+			    if (err) {
+			      console.log(err);
+			      return;
+			    }
+			    console.log(sleep);
+			});			
+			*/
+
             process.nextTick(function() {
-                if (!req.user) {
-                    User.findOne({
-                        'fitbit.id': profile.id
-                    }, function(err, user) {
-                        if (err)
-                            return done(err);
-                        if (user) {
-                            // if there is a user id already but no token (user was linked at one point and then removed)
-                            if (!user.fitbit.token) {
-                                user.fitbit.token = token;
-                                user.fitbit.name = profile.displayName;
-                                // user.fitbit.email = (profile.emails[0].value || '').toLowerCase(); // pull the first email
-                                user.save(function(err) {
-                                    if (err)
-                                        throw err;
-                                    return done(null, user);
-                                });
-                            }
-                            return done(null, user);
-                        } else {
-                            var newUser = new User();
-                            newUser.fitbit.id = profile.id;
-                            newUser.fitbit.token = token;
-                            newUser.fitbit.name = profile.displayName;
-                            // newUser.fitbit.email = (profile.emails[0].value || '').toLowerCase(); // pull the first email
-                            newUser.save(function(err) {
+                User.findOne({
+                	$or: [
+	                    	{'facebook.name': profile._json.user.fullName},
+	                    	{'twitter.displayName' : profile._json.user.fullName},
+	                    	{'google.name': profile._json.user.fullName}
+	                    ]
+                }, function(err, user) {
+                    if (err)
+                        return done(err);
+                    if (user) {
+                        // if there is a user id already but no token (user was linked at one point and then removed)
+                        if (!user.fitbit.token) {
+                            user.fitbit.token = token;
+                            user.fitbit.name = profile.displayName;
+                            // user.fitbit.email = (profile.emails[0].value || '').toLowerCase(); // pull the first email
+                            user.save(function(err) {
                                 if (err)
                                     throw err;
-                                return done(null, newUser);
+                                return done(null, user);
                             });
                         }
-                    });
-                } else {
-                    // user already exists and is logged in, we have to link accounts
-                    var user = req.user; // pull the user out of the session
-                    user.fitbit.id = profile.id;
-                    user.fitbit.token = token;
-                    user.fitbit.name = profile.displayName;
-                    // user.fitbit.email = (profile.emails[0].value || '').toLowerCase(); // pull the first email
-                    user.save(function(err) {
-                        if (err)
-                            throw err;
                         return done(null, user);
-                    });
-                }
+                    } else {
+                        var newUser = new User();
+                        newUser.fitbit.id = profile.id;
+                        newUser.fitbit.token = token;
+                        newUser.fitbit.name = profile.displayName;
+                        // newUser.fitbit.email = (profile.emails[0].value || '').toLowerCase(); // pull the first email
+                        newUser.save(function(err) {
+                            if (err)
+                                throw err;
+                            return done(null, newUser);
+                        });
+                    }
+                });
             });
         }
     ));
