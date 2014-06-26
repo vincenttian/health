@@ -8,6 +8,11 @@ http://scotch.io/tutorials/javascript/easy-node-authentication-setup-and-local
 Mongoose Docs:
 http://mongoosejs.com/docs/
 
+Fitbit Passport:
+https://github.com/jaredhanson/passport-fitbit
+
+Jawbone Passport:
+https://www.npmjs.org/package/passport-jawbone
 
 ###MongoDB
 

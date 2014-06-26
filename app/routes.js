@@ -98,6 +98,34 @@ module.exports = function(app, passport) {
             failureRedirect: '/'
         }));
 
+    // fitbit ---------------------------------
+
+    // send to fitbit to do the authentication
+    app.get('/auth/fitbit', passport.authenticate('fitbit', {
+        scope: ['profile', 'email']
+    }));
+
+    // the callback after fitbit has authenticated the user
+    app.get('/auth/fitbit/callback',
+        passport.authenticate('fitbit', {
+            successRedirect: '/profile',
+            failureRedirect: '/'
+        }));
+
+    // jawbone ---------------------------------
+
+    // send to jawbone to do the authentication
+    app.get('/auth/jawbone', passport.authenticate('jawbone', {
+        scope: ['profile', 'email']
+    }));
+
+    // the callback after jawbone has authenticated the user
+    app.get('/auth/jawbone/callback',
+        passport.authenticate('jawbone', {
+            successRedirect: '/profile',
+            failureRedirect: '/'
+        }));
+
     // =============================================================================
     // AUTHORIZE (ALREADY LOGGED IN / CONNECTING OTHER SOCIAL ACCOUNT) =============
     // =============================================================================
@@ -157,6 +185,34 @@ module.exports = function(app, passport) {
             failureRedirect: '/'
         }));
 
+    // fitbit ---------------------------------
+
+    // send to fitbit to do the authentication
+    app.get('/connect/fitbit', passport.authorize('fitbit', {
+        scope: ['profile', 'email']
+    }));
+
+    // the callback after fitbit has authorized the user
+    app.get('/connect/fitbit/callback',
+        passport.authorize('fitbit', {
+            successRedirect: '/profile',
+            failureRedirect: '/'
+        }));
+
+    // jawbone ---------------------------------
+
+    // send to jawbone to do the authentication
+    app.get('/connect/jawbone', passport.authorize('jawbone', {
+        scope: ['profile', 'email']
+    }));
+
+    // the callback after jawbone has authorized the user
+    app.get('/connect/jawbone/callback',
+        passport.authorize('jawbone', {
+            successRedirect: '/profile',
+            failureRedirect: '/'
+        }));
+
     // =============================================================================
     // UNLINK ACCOUNTS =============================================================
     // =============================================================================
@@ -201,6 +257,23 @@ module.exports = function(app, passport) {
         });
     });
 
+    // fitbit ---------------------------------
+    app.get('/unlink/fitbit', function(req, res) {
+        var user = req.user;
+        user.fitbit.token = undefined;
+        user.save(function(err) {
+            res.redirect('/profile');
+        });
+    });
+
+    // jawbone ---------------------------------
+    app.get('/unlink/jawbone', function(req, res) {
+        var user = req.user;
+        user.jawbone.token = undefined;
+        user.save(function(err) {
+            res.redirect('/profile');
+        });
+    });
 
 };
 
