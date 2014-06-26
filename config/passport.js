@@ -1,6 +1,8 @@
 var Fitbit = require('fitbit');
 var client;
 
+var async = require("async");
+
 // load all the things we need
 var LocalStrategy = require('passport-local').Strategy;
 var FacebookStrategy = require('passport-facebook').Strategy;
@@ -433,52 +435,94 @@ module.exports = function(passport) {
 		            up_me = JSON.parse(body);
 		            global.userName = up_me.data.first + ' ' + up_me.data.last;
 		            profile = up_me['data'];
-		            console.log(profile);
-	                if (!req.user) {
-	                    User.findOne({
-	                        'jawbone.id': profile.xid
-	                    }, function(err, user) {
-	                        if (err)
-	                            return done(err);
-	                        if (user) {
-	                            // if there is a user id already but no token (user was linked at one point and then removed)
-	                            if (!user.jawbone.token) {
-	                                user.jawbone.token = token;
-	                                user.jawbone.name = profile.first + ' ' + profile.last;
-	                                // user.jawbone.email = (profile.emails[0].value || '').toLowerCase(); // pull the first email
-	                                user.save(function(err) {
-	                                    if (err)
-	                                        throw err;
-	                                    return done(null, user);
-	                                });
-	                            }
-	                            return done(null, user);
-	                        } else {
-	                            var newUser = new User();
-	                            newUser.jawbone.id = profile.xid;
-	                            newUser.jawbone.token = token;
-                                newUser.jawbone.name = profile.first + ' ' + profile.last;
-	                            // newUser.jawbone.email = (profile.emails[0].value || '').toLowerCase(); // pull the first email
-	                            newUser.save(function(err) {
-	                                if (err)
-	                                    throw err;
-	                                return done(null, newUser);
-	                            });
-	                        }
-	                    });
-	                } else {
-	                    // user already exists and is logged in, we have to link accounts
-	                    var user = req.user; // pull the user out of the session
-	                    user.jawbone.id = profile.xid;
-	                    user.jawbone.token = token;
-	                    user.jawbone.name = profile.first + ' ' + profile.last;
-	                    // user.jawbone.email = (profile.emails[0].value || '').toLowerCase(); // pull the first email
-	                    user.save(function(err) {
-	                        if (err)
-	                            throw err;
-	                        return done(null, user);
-	                    });
-	                }
+		            if (err) throw(err);
+
+		            async.series([
+		            	function(callback) {
+		            		up.events.body.get({}, function(err, body_comp) {
+								callback(null, body_comp);
+		            		});
+		            	},
+		            	function(callback) {
+		            		up.events.cardiac.get({}, function(err, cardiac) {
+			            		callback(null, cardiac);
+			            	});
+		            	},
+		            	function(callback) {
+		            		up.sleeps.get({}, function(err, sleep) {
+			            		callback(null, sleep);
+			            	});
+		            	},
+		            	function(callback) {
+		            		up.goals.get({}, function(err, goals) {
+			            		callback(null, goals);
+			            	});
+		            	},
+		            	function(callback) {
+		            		up.trends.get({}, function(err, trends) {
+			            		callback(null, trends);
+			            	});
+		            	},
+		            	function(callback) {
+		            		up.workouts.get({}, function(err, workouts) {
+			            		callback(null, workouts);
+			            	});
+		            	}
+		            ], function(err, results) {
+			            var user_info = {};
+		            	user_info['body_comp'] = results[0];
+		            	user_info['cardiac'] = results[1];
+		            	user_info['sleep'] = results[2];
+		            	user_info['goals'] = results[3];
+		            	user_info['trends'] = results[4];
+		            	user_info['workouts'] = results[5];
+		            	console.log(user_info);
+		            	if (!req.user) {
+		                    User.findOne({
+		                        'jawbone.id': profile.xid
+		                    }, function(err, user) {
+		                        if (err)
+		                            return done(err);
+		                        if (user) {
+		                            // if there is a user id already but no token (user was linked at one point and then removed)
+		                            if (!user.jawbone.token) {
+		                                user.jawbone.token = token;
+		                                user.jawbone.name = profile.first + ' ' + profile.last;
+		                                // user.jawbone.email = (profile.emails[0].value || '').toLowerCase(); // pull the first email
+		                                user.save(function(err) {
+		                                    if (err)
+		                                        throw err;
+		                                    return done(null, user);
+		                                });
+		                            }
+		                            return done(null, user);
+		                        } else {
+		                            var newUser = new User();
+		                            newUser.jawbone.id = profile.xid;
+		                            newUser.jawbone.token = token;
+	                                newUser.jawbone.name = profile.first + ' ' + profile.last;
+		                            // newUser.jawbone.email = (profile.emails[0].value || '').toLowerCase(); // pull the first email
+		                            newUser.save(function(err) {
+		                                if (err)
+		                                    throw err;
+		                                return done(null, newUser);
+		                            });
+		                        }
+		                    });
+		                } else {
+		                    // user already exists and is logged in, we have to link accounts
+		                    var user = req.user; // pull the user out of the session
+		                    user.jawbone.id = profile.xid;
+		                    user.jawbone.token = token;
+		                    user.jawbone.name = profile.first + ' ' + profile.last;
+		                    // user.jawbone.email = (profile.emails[0].value || '').toLowerCase(); // pull the first email
+		                    user.save(function(err) {
+		                        if (err)
+		                            throw err;
+		                        return done(null, user);
+		                    });
+		                }
+		            })
 	            });
             });
         }

@@ -17,6 +17,9 @@ https://www.npmjs.org/package/fitbit
 Jawbone Passport:
 https://github.com/maxutter/up-api-auth-demo
 
+Jawbone API:
+https://github.com/ryanseys/node-jawbone-up
+
 ###MongoDB
 
 

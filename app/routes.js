@@ -119,7 +119,7 @@ module.exports = function(app, passport) {
 
     // send to jawbone to do the authentication
     app.get('/auth/jawbone', passport.authenticate('jawbone', {
-        scope: ['basic_read','extended_read','friends_read','move_read','sleep_read','meal_read','mood_write']
+        scope: ['basic_read','extended_read','friends_read','move_read','sleep_read','meal_read', 'location_read', 'weight_read', 'cardiac_read']
         })
     );
 
@@ -213,7 +213,7 @@ module.exports = function(app, passport) {
 
     // send to jawbone to do the authentication
     app.get('/connect/jawbone', passport.authorize('jawbone', {
-        scope: ['basic_read','extended_read','friends_read','move_read','sleep_read','meal_read','mood_write']
+        scope: ['basic_read','extended_read','friends_read','move_read','sleep_read','meal_read', 'location_read', 'weight_read', 'cardiac_read']
     }));
 
     // the callback after jawbone has authorized the user
