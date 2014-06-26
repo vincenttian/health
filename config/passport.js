@@ -316,7 +316,7 @@ module.exports = function(passport) {
             consumerSecret: configAuth.fitbitAuth.clientSecret,
             callbackURL: configAuth.fitbitAuth.callbackURL
         },
-        function(token, tokenSecret, profile, done) {
+        function(req, token, tokenSecret, profile, done) {
             process.nextTick(function() {
                 if (!req.user) {
                     User.findOne({
@@ -329,7 +329,7 @@ module.exports = function(passport) {
                             if (!user.fitbit.token) {
                                 user.fitbit.token = token;
                                 user.fitbit.name = profile.displayName;
-                                user.fitbit.email = (profile.emails[0].value || '').toLowerCase(); // pull the first email
+                                // user.fitbit.email = (profile.emails[0].value || '').toLowerCase(); // pull the first email
                                 user.save(function(err) {
                                     if (err)
                                         throw err;
@@ -342,7 +342,7 @@ module.exports = function(passport) {
                             newUser.fitbit.id = profile.id;
                             newUser.fitbit.token = token;
                             newUser.fitbit.name = profile.displayName;
-                            newUser.fitbit.email = (profile.emails[0].value || '').toLowerCase(); // pull the first email
+                            // newUser.fitbit.email = (profile.emails[0].value || '').toLowerCase(); // pull the first email
                             newUser.save(function(err) {
                                 if (err)
                                     throw err;
@@ -356,7 +356,7 @@ module.exports = function(passport) {
                     user.fitbit.id = profile.id;
                     user.fitbit.token = token;
                     user.fitbit.name = profile.displayName;
-                    user.fitbit.email = (profile.emails[0].value || '').toLowerCase(); // pull the first email
+                    // user.fitbit.email = (profile.emails[0].value || '').toLowerCase(); // pull the first email
                     user.save(function(err) {
                         if (err)
                             throw err;
@@ -375,7 +375,8 @@ module.exports = function(passport) {
             clientSecret: configAuth.jawboneAuth.clientSecret,
             callbackURL: configAuth.jawboneAuth.callbackURL
         },
-        function(token, tokenSecret, profile, done) {
+        function(req, token, tokenSecret, profile, done) {
+        	console.log('got to jawbone strategy')
             process.nextTick(function() {
                 if (!req.user) {
                     User.findOne({

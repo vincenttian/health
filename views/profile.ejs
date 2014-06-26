@@ -103,6 +103,48 @@
 
 			</div>
 		</div>
+
+		<!-- Fitbit INFORMATION -->
+		<div class="col-sm-6">
+			<div class="well">
+				<h3 class="text-primary"><span class="fa fa-fitbit-plus"></span> Fitbit</h3>
+
+				<% if (user.fitbit.token) { %>
+					<p>
+						<strong>id</strong>: <%= user.fitbit.id %><br>
+						<strong>token</strong>: <%= user.fitbit.token %><br>
+						<strong>email</strong>: <%= user.fitbit.email %><br>
+						<strong>name</strong>: <%= user.fitbit.name %>
+					</p>
+
+					<a href="/unlink/fitbit" class="btn btn-primary">Unlink</a>
+				<% } else { %>
+					<a href="/connect/fitbit" class="btn btn-primary">Connect Fitbit</a>
+				<% } %>
+
+			</div>
+		</div>
+
+		<!-- Jawbone INFORMATION -->
+		<div class="col-sm-6">
+			<div class="well">
+				<h3 class="text-info"><span class="fa fa-jawbone-plus"></span> Jawbone</h3>
+
+				<% if (user.jawbone.token) { %>
+					<p>
+						<strong>id</strong>: <%= user.jawbone.id %><br>
+						<strong>token</strong>: <%= user.jawbone.token %><br>
+						<strong>email</strong>: <%= user.jawbone.email %><br>
+						<strong>name</strong>: <%= user.jawbone.name %>
+					</p>
+
+					<a href="/unlink/jawbone" class="btn btn-info">Unlink</a>
+				<% } else { %>
+					<a href="/connect/jawbone" class="btn btn-info">Connect Jawbone</a>
+				<% } %>
+
+			</div>
+		</div>
 	</div>
 </div>
 </body>

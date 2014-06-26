@@ -101,30 +101,35 @@ module.exports = function(app, passport) {
     // fitbit ---------------------------------
 
     // send to fitbit to do the authentication
-    app.get('/auth/fitbit', passport.authenticate('fitbit', {
-        scope: ['profile', 'email']
-    }));
+    app.get('/auth/fitbit', 
+        passport.authenticate('fitbit'));
 
     // the callback after fitbit has authenticated the user
     app.get('/auth/fitbit/callback',
         passport.authenticate('fitbit', {
-            successRedirect: '/profile',
             failureRedirect: '/'
-        }));
+        }),
+        function(req, res) {
+            console.log('got here');
+            res.redirect('/profile');
+        });
 
     // jawbone ---------------------------------
 
     // send to jawbone to do the authentication
     app.get('/auth/jawbone', passport.authenticate('jawbone', {
-        scope: ['profile', 'email']
-    }));
+            scope: ['basic_read', 'extended_read', 'friends_read']
+        })
+    );
 
     // the callback after jawbone has authenticated the user
     app.get('/auth/jawbone/callback',
         passport.authenticate('jawbone', {
-            successRedirect: '/profile',
             failureRedirect: '/'
-        }));
+        }), function(req, res) {
+            console.log('got to auth/jawbone/callback');
+            res.redirect('/profile');
+        });
 
     // =============================================================================
     // AUTHORIZE (ALREADY LOGGED IN / CONNECTING OTHER SOCIAL ACCOUNT) =============
@@ -204,7 +209,9 @@ module.exports = function(app, passport) {
     // send to jawbone to do the authentication
     app.get('/connect/jawbone', passport.authorize('jawbone', {
         scope: ['profile', 'email']
-    }));
+    }), function() {
+        console.log('got here');
+    });
 
     // the callback after jawbone has authorized the user
     app.get('/connect/jawbone/callback',
@@ -273,6 +280,13 @@ module.exports = function(app, passport) {
         user.save(function(err) {
             res.redirect('/profile');
         });
+    });
+
+
+
+    // Route for 404 errors ---------------------
+    app.get('*', function(req, res){
+      res.send('what???', 404);
     });
 
 };
