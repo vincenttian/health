@@ -4,7 +4,7 @@ var FacebookStrategy = require('passport-facebook').Strategy;
 var TwitterStrategy = require('passport-twitter').Strategy;
 var GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
 var FitbitStrategy = require('passport-fitbit').Strategy;
-var JawboneStrategy = require('passport-jawbone').Strategy;
+var JawboneStrategy = require('passport-oauth').OAuth2Strategy;
 
 // load up the user model
 var User = require('../app/models/user');
@@ -370,59 +370,74 @@ module.exports = function(passport) {
     // =========================================================================
     // Jawbone =================================================================
     // =========================================================================
-    passport.use(new JawboneStrategy({
-            clientID: configAuth.jawboneAuth.clientID,
-            clientSecret: configAuth.jawboneAuth.clientSecret,
-            callbackURL: configAuth.jawboneAuth.callbackURL
+    passport.use('jawbone', new JawboneStrategy({
+            clientID        : configAuth.jawboneAuth.clientID,
+	        clientSecret    : configAuth.jawboneAuth.clientSecret,
+	        callbackURL     : configAuth.jawboneAuth.callbackURL,
+	        authorizationURL: configAuth.jawboneAuth.authorizationURL,
+	        tokenURL        : configAuth.jawboneAuth.tokenURL,
+	        passReqToCallback : true // allows us to pass in the req from our route (lets us check if a user is logged in or not)
         },
         function(req, token, tokenSecret, profile, done) {
-        	console.log('got to jawbone strategy')
             process.nextTick(function() {
-                if (!req.user) {
-                    User.findOne({
-                        'jawbone.id': profile.id
-                    }, function(err, user) {
-                        if (err)
-                            return done(err);
-                        if (user) {
-                            // if there is a user id already but no token (user was linked at one point and then removed)
-                            if (!user.jawbone.token) {
-                                user.jawbone.token = token;
-                                user.jawbone.name = profile.displayName;
-                                user.jawbone.email = (profile.emails[0].value || '').toLowerCase(); // pull the first email
-                                user.save(function(err) {
-                                    if (err)
-                                        throw err;
-                                    return done(null, user);
-                                });
-                            }
-                            return done(null, user);
-                        } else {
-                            var newUser = new User();
-                            newUser.jawbone.id = profile.id;
-                            newUser.jawbone.token = token;
-                            newUser.jawbone.name = profile.displayName;
-                            newUser.jawbone.email = (profile.emails[0].value || '').toLowerCase(); // pull the first email
-                            newUser.save(function(err) {
-                                if (err)
-                                    throw err;
-                                return done(null, newUser);
-                            });
-                        }
-                    });
-                } else {
-                    // user already exists and is logged in, we have to link accounts
-                    var user = req.user; // pull the user out of the session
-                    user.jawbone.id = profile.id;
-                    user.jawbone.token = token;
-                    user.jawbone.name = profile.displayName;
-                    user.jawbone.email = (profile.emails[0].value || '').toLowerCase(); // pull the first email
-                    user.save(function(err) {
-                        if (err)
-                            throw err;
-                        return done(null, user);
-                    });
-                }
+            	// set up jawbone api access        
+		        var options = {
+					'client_id' : configAuth.jawboneAuth.clientID,
+					'client_secret' : configAuth.jawboneAuth.clientSecret,
+					'access_token' : token
+				}
+		        up = require('jawbone-up')(options);
+		        up.me.get({}, function(err, body) {
+		            up_me = JSON.parse(body);
+		            global.userName = up_me.data.first + ' ' + up_me.data.last;
+		            profile = up_me['data'];
+		            console.log(profile);
+	                if (!req.user) {
+	                    User.findOne({
+	                        'jawbone.id': profile.xid
+	                    }, function(err, user) {
+	                        if (err)
+	                            return done(err);
+	                        if (user) {
+	                            // if there is a user id already but no token (user was linked at one point and then removed)
+	                            if (!user.jawbone.token) {
+	                                user.jawbone.token = token;
+	                                user.jawbone.name = profile.first + ' ' + profile.last;
+	                                // user.jawbone.email = (profile.emails[0].value || '').toLowerCase(); // pull the first email
+	                                user.save(function(err) {
+	                                    if (err)
+	                                        throw err;
+	                                    return done(null, user);
+	                                });
+	                            }
+	                            return done(null, user);
+	                        } else {
+	                            var newUser = new User();
+	                            newUser.jawbone.id = profile.xid;
+	                            newUser.jawbone.token = token;
+                                newUser.jawbone.name = profile.first + ' ' + profile.last;
+	                            // newUser.jawbone.email = (profile.emails[0].value || '').toLowerCase(); // pull the first email
+	                            newUser.save(function(err) {
+	                                if (err)
+	                                    throw err;
+	                                return done(null, newUser);
+	                            });
+	                        }
+	                    });
+	                } else {
+	                    // user already exists and is logged in, we have to link accounts
+	                    var user = req.user; // pull the user out of the session
+	                    user.jawbone.id = profile.xid;
+	                    user.jawbone.token = token;
+	                    user.jawbone.name = profile.first + ' ' + profile.last;
+	                    // user.jawbone.email = (profile.emails[0].value || '').toLowerCase(); // pull the first email
+	                    user.save(function(err) {
+	                        if (err)
+	                            throw err;
+	                        return done(null, user);
+	                    });
+	                }
+	            });
             });
         }
     ));

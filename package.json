@@ -9,6 +9,7 @@
     "ejs": "~0.8.5",
     "express": "~4.0.0",
     "express-session": "~1.0.0",
+    "jawbone-up": "0.0.1",
     "method-override": "~1.0.0",
     "mongodb": "latest",
     "mongoose": "~3.8.1",
@@ -19,6 +20,7 @@
     "passport-google-oauth": "~0.1.5",
     "passport-jawbone": "^0.1.0",
     "passport-local": "~0.1.6",
+    "passport-oauth": "^1.0.0",
     "passport-twitter": "~1.0.2"
   }
 }

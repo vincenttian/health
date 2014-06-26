@@ -110,7 +110,6 @@ module.exports = function(app, passport) {
             failureRedirect: '/'
         }),
         function(req, res) {
-            console.log('got here');
             res.redirect('/profile');
         });
 
@@ -118,7 +117,7 @@ module.exports = function(app, passport) {
 
     // send to jawbone to do the authentication
     app.get('/auth/jawbone', passport.authenticate('jawbone', {
-            scope: ['basic_read', 'extended_read', 'friends_read']
+        scope: ['basic_read','extended_read','friends_read','move_read','sleep_read','meal_read','mood_write']
         })
     );
 
@@ -127,7 +126,6 @@ module.exports = function(app, passport) {
         passport.authenticate('jawbone', {
             failureRedirect: '/'
         }), function(req, res) {
-            console.log('got to auth/jawbone/callback');
             res.redirect('/profile');
         });
 
@@ -208,10 +206,8 @@ module.exports = function(app, passport) {
 
     // send to jawbone to do the authentication
     app.get('/connect/jawbone', passport.authorize('jawbone', {
-        scope: ['profile', 'email']
-    }), function() {
-        console.log('got here');
-    });
+        scope: ['basic_read','extended_read','friends_read','move_read','sleep_read','meal_read','mood_write']
+    }));
 
     // the callback after jawbone has authorized the user
     app.get('/connect/jawbone/callback',
