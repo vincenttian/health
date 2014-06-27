@@ -334,80 +334,80 @@ module.exports = function(passport) {
 				}
 			);
 
-			// Fetch todays activities
-			/*
-			client.getActivities(function (err, activities) {
-			    if (err) {
-			      console.log(err);
-			      return;
-			    }
-			    console.log(activities);
-			});
-
-			client.getDevices(function (err, devices) {
-			    if (err) {
-			      console.log(err);
-			      return;
-			    }
-			    console.log(devices);
-			});
-
-			client.getSleep(function (err, sleep) {
-			    if (err) {
-			      console.log(err);
-			      return;
-			    }
-			    console.log(sleep);
-			});
-			*/
-
-			/*
-			client.getbodymeasurements(function (err, sleep) {
-			    if (err) {
-			      console.log(err);
-			      return;
-			    }
-			    console.log(sleep);
-			});			
-			*/
-
-            process.nextTick(function() {
-                User.findOne({
-                	$or: [
-	                    	{'facebook.name': profile._json.user.fullName},
-	                    	{'twitter.displayName' : profile._json.user.fullName},
-	                    	{'google.name': profile._json.user.fullName}
-	                    ]
-                }, function(err, user) {
-                    if (err)
-                        return done(err);
-                    if (user) {
-                        // if there is a user id already but no token (user was linked at one point and then removed)
-                        if (!user.fitbit.token) {
-                            user.fitbit.token = token;
-                            user.fitbit.name = profile.displayName;
-                            // user.fitbit.email = (profile.emails[0].value || '').toLowerCase(); // pull the first email
-                            user.save(function(err) {
-                                if (err)
-                                    throw err;
-                                return done(null, user);
-                            });
-                        }
-                        return done(null, user);
-                    } else {
-                        var newUser = new User();
-                        newUser.fitbit.id = profile.id;
-                        newUser.fitbit.token = token;
-                        newUser.fitbit.name = profile.displayName;
-                        // newUser.fitbit.email = (profile.emails[0].value || '').toLowerCase(); // pull the first email
-                        newUser.save(function(err) {
-                            if (err)
-                                throw err;
-                            return done(null, newUser);
-                        });
-                    }
-                });
-            });
+			async.series([
+	        	function(callback) {
+					client.getActivities(function (err, activities) {
+					    callback(null, activities);
+					});
+	        	},
+	        	function(callback) {
+	        		client.getDevices(function (err, devices) {
+					    callback(null, devices);
+					});
+	        	},
+	        	function(callback) {
+	        		client.getSleep(function (err, sleep) {
+					    callback(null, sleep);
+					});
+	        	}
+	        	/*
+	        	,
+	        	function(callback) {
+	        		client.getbodymeasurements(function (err, activities) {
+					    callback(null, activities);
+					});
+	        	},
+	        	function(callback) {
+	        		client.getActivities(function (err, activities) {
+					    callback(null, activities);
+					});
+	        	}
+	        	*/
+	        ], function(err, results) {
+	        	var info = {};
+	        	info['activities'] = results[0];
+	        	info['devices'] = results[1];
+	        	info['sleep'] = results[2];
+	        	// info['activities'] = results[3];
+	        	console.log(info);
+	        	process.nextTick(function() {
+	                User.findOne({
+	                	$or: [
+		                    	{'facebook.name': profile._json.user.fullName},
+		                    	{'twitter.displayName' : profile._json.user.fullName},
+		                    	{'google.name': profile._json.user.fullName}
+		                    ]
+	                }, function(err, user) {
+	                    if (err)
+	                        return done(err);
+	                    if (user) {
+	                        // if there is a user id already but no token (user was linked at one point and then removed)
+	                        if (!user.fitbit.token) {
+	                            user.fitbit.token = token;
+	                            user.fitbit.name = profile.displayName;
+	                            // user.fitbit.email = (profile.emails[0].value || '').toLowerCase(); // pull the first email
+	                            user.save(function(err) {
+	                                if (err)
+	                                    throw err;
+	                                return done(null, user);
+	                            });
+	                        }
+	                        return done(null, user);
+	                    } else {
+	                        var newUser = new User();
+	                        newUser.fitbit.id = profile.id;
+	                        newUser.fitbit.token = token;
+	                        newUser.fitbit.name = profile.displayName;
+	                        // newUser.fitbit.email = (profile.emails[0].value || '').toLowerCase(); // pull the first email
+	                        newUser.save(function(err) {
+	                            if (err)
+	                                throw err;
+	                            return done(null, newUser);
+	                        });
+	                    }
+	                });
+	            });
+	        });
         }
     ));
 

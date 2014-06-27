@@ -1,5 +1,3 @@
-var Fitbit = require('fitbit');
-
 module.exports = function(app, passport) {
 
     // normal routes ===============================================================

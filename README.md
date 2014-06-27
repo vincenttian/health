@@ -64,3 +64,8 @@ $ mongo
 	Find All people in Bay Area
 
 	> db.allpeoples.find({location: "San Francisco Bay Area"})
+
+###Running the App
+
+In production, make sure to check that the production database is used in server.js.
+Also, make sure that the callback URLs in auth.js are set for the production environment.
