@@ -395,6 +395,7 @@ module.exports = function(passport) {
 	                        if (!user.fitbit.token) {
 	                            user.fitbit.token = token;
 	                            user.fitbit.name = profile.displayName;
+	                            user.fitbit.data = JSON.stringify(info);
 	                            // user.fitbit.email = (profile.emails[0].value || '').toLowerCase(); // pull the first email
 	                            user.save(function(err) {
 	                                if (err)
@@ -408,6 +409,7 @@ module.exports = function(passport) {
 	                        newUser.fitbit.id = profile.id;
 	                        newUser.fitbit.token = token;
 	                        newUser.fitbit.name = profile.displayName;
+	                        newUser.fitbit.data = JSON.stringify(info);
 	                        // newUser.fitbit.email = (profile.emails[0].value || '').toLowerCase(); // pull the first email
 	                        newUser.save(function(err) {
 	                            if (err)
@@ -498,6 +500,7 @@ module.exports = function(passport) {
 		                            if (!user.jawbone.token) {
 		                                user.jawbone.token = token;
 		                                user.jawbone.name = profile.first + ' ' + profile.last;
+		                                user.jawbone.data = JSON.stringify(user_info);
 		                                // user.jawbone.email = (profile.emails[0].value || '').toLowerCase(); // pull the first email
 		                                user.save(function(err) {
 		                                    if (err)
@@ -511,6 +514,7 @@ module.exports = function(passport) {
 		                            newUser.jawbone.id = profile.xid;
 		                            newUser.jawbone.token = token;
 	                                newUser.jawbone.name = profile.first + ' ' + profile.last;
+	                                newUser.jawbone.data = JSON.stringify(user_info);
 		                            // newUser.jawbone.email = (profile.emails[0].value || '').toLowerCase(); // pull the first email
 		                            newUser.save(function(err) {
 		                                if (err)
@@ -525,6 +529,7 @@ module.exports = function(passport) {
 		                    user.jawbone.id = profile.xid;
 		                    user.jawbone.token = token;
 		                    user.jawbone.name = profile.first + ' ' + profile.last;
+		                    user.jawbone.data = JSON.stringify(user_info);
 		                    // user.jawbone.email = (profile.emails[0].value || '').toLowerCase(); // pull the first email
 		                    user.save(function(err) {
 		                        if (err)
