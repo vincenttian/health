@@ -101,7 +101,7 @@ module.exports = function(app, passport) {
     // fitbit ---------------------------------
 
     // send to fitbit to do the authentication
-    app.get('/auth/fitbit', 
+    app.get('/auth/fitbit',
         passport.authenticate('fitbit'));
 
     // the callback after fitbit has authenticated the user
@@ -117,9 +117,8 @@ module.exports = function(app, passport) {
 
     // send to jawbone to do the authentication
     app.get('/auth/jawbone', passport.authenticate('jawbone', {
-        scope: ['basic_read','extended_read','friends_read','move_read','sleep_read','meal_read', 'location_read', 'weight_read', 'cardiac_read']
-        })
-    );
+        scope: ['basic_read', 'extended_read', 'friends_read', 'move_read', 'sleep_read', 'meal_read', 'location_read', 'weight_read', 'cardiac_read']
+    }));
 
     // the callback after jawbone has authenticated the user
     app.get('/auth/jawbone/callback',
@@ -201,9 +200,9 @@ module.exports = function(app, passport) {
             failureRedirect: '/'
         }),
         function(req, res) {
-        	console.log('GOT TO CONNECT FITBIT');
-        	console.log(req);
-        	console.log(res);
+            console.log('GOT TO CONNECT FITBIT');
+            console.log(req);
+            console.log(res);
             res.redirect('/profile');
         });
 
@@ -211,7 +210,7 @@ module.exports = function(app, passport) {
 
     // send to jawbone to do the authentication
     app.get('/connect/jawbone', passport.authorize('jawbone', {
-        scope: ['basic_read','extended_read','friends_read','move_read','sleep_read','meal_read', 'location_read', 'weight_read', 'cardiac_read']
+        scope: ['basic_read', 'extended_read', 'friends_read', 'move_read', 'sleep_read', 'meal_read', 'location_read', 'weight_read', 'cardiac_read']
     }));
 
     // the callback after jawbone has authorized the user
@@ -286,8 +285,8 @@ module.exports = function(app, passport) {
 
 
     // Route for 404 errors ---------------------
-    app.get('*', function(req, res){
-      res.send('what???', 404);
+    app.get('*', function(req, res) {
+        res.render('404.ejs');
     });
 
 };
