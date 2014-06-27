@@ -349,27 +349,37 @@ module.exports = function(passport) {
 	        		client.getSleep(function (err, sleep) {
 					    callback(null, sleep);
 					});
-	        	}
-	        	/*
-	        	,
+	        	},
 	        	function(callback) {
-	        		client.getbodymeasurements(function (err, activities) {
-					    callback(null, activities);
+	        		client.getBodyFat(function (err, r) {
+					    callback(null, r);
 					});
 	        	},
 	        	function(callback) {
-	        		client.getActivities(function (err, activities) {
-					    callback(null, activities);
+	        		client.getBodyWeight(function (err, re) {
+					    callback(null, re);
+					});
+	        	},
+	        	function(callback) {
+	        		client.getFoods(function (err, res) {
+					    callback(null, res);
+					});
+	        	},
+	        	function(callback) {
+	        		client.getBodyMeasurements(function (err, resp) {
+					    callback(null, resp);
 					});
 	        	}
-	        	*/
 	        ], function(err, results) {
 	        	var info = {};
 	        	info['activities'] = results[0];
 	        	info['devices'] = results[1];
 	        	info['sleep'] = results[2];
-	        	// info['activities'] = results[3];
-	        	console.log(info);
+	        	info['bodyfat'] = results[3];
+	        	info['bodyweight'] = results[4];
+	        	info['foods'] = results[5];
+				info['bodymeasurements'] = results[6];
+				console.log(info);
 	        	process.nextTick(function() {
 	                User.findOne({
 	                	$or: [
