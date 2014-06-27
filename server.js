@@ -41,7 +41,7 @@ console.log('The magic happens on port ' + port);
 // database ====================================================================
 
 // Development
-
+/*
 mongoose.connect("mongodb://localhost:27017/health");
 var MongoClient = require('mongodb').MongoClient;
 MongoClient.connect("mongodb://localhost:27017/health", function(err, db) {
@@ -49,9 +49,9 @@ MongoClient.connect("mongodb://localhost:27017/health", function(err, db) {
         console.log("MongoDB is connected");
     }
 });
+*/
 
 // Production
-/*
 var mongoUri = process.env.MONGOLAB_URI ||
     process.env.MONGOHQ_URL ||
     'mongodb://localhost/mydb';
@@ -66,4 +66,3 @@ mongo.Db.connect(mongoUri, function(err, db) {
         }, function(er, rs) {});
     });
 });
-*/

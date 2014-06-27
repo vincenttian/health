@@ -1,10 +1,10 @@
 // config/auth.js
 
 // Development
-var base_url = 'http://localhost:3000';
+// var base_url = 'http://localhost:3000';
 
 // Production
-// var base_url = 'http://navihealth.herokuapp.com';
+var base_url = 'http://navihealth.herokuapp.com';
 
 module.exports = {
 

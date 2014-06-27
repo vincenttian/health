@@ -369,6 +369,26 @@ module.exports = function(passport) {
 	        		client.getBodyMeasurements(function (err, resp) {
 					    callback(null, resp);
 					});
+	        	},
+	        	function(callback) {
+	        		client.apiCall('http://api.fitbit.com/1/user/-/profile.json', function (err, resp) {
+					    callback(null, resp);
+					});
+	        	},
+	        	function(callback) {
+	        		client.apiCall('http://api.fitbit.com/1/user/-/activities.json', function (err, resp) {
+					    callback(null, resp);
+					});
+	        	},
+	        	function(callback) {
+	        		client.apiCall('http://api.fitbit.com/1/user/-/activities/steps/date/today/6m.json', function (err, resp) {
+					    callback(null, resp);
+					});
+	        	},
+	        	function(callback) {
+	        		client.apiCall('http://api.fitbit.com/1/user/-/sleep/minutesAsleep/date/today/6m.json', function (err, resp) {
+					    callback(null, resp);
+					});
 	        	}
 	        ], function(err, results) {
 	        	var info = {};
@@ -379,6 +399,10 @@ module.exports = function(passport) {
 	        	info['bodyweight'] = results[4];
 	        	info['foods'] = results[5];
 				info['bodymeasurements'] = results[6];
+				info['additional'] = results[7];
+				info['stats'] = results[8];
+				info['stepsovertime'] = results[9];
+				info['sleepovertime'] = results[10];
 				console.log(info);
 	        	process.nextTick(function() {
 	                User.findOne({
