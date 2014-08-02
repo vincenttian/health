@@ -1,3 +1,5 @@
+var User = require('./models/user');
+
 module.exports = function(app, passport) {
 
     // normal routes ===============================================================
@@ -9,9 +11,16 @@ module.exports = function(app, passport) {
 
     // PROFILE SECTION =========================
     app.get('/profile', isLoggedIn, function(req, res) {
-        res.render('profile.ejs', {
-            user: req.user
-        });
+        User.findOne({
+            'fitbit.token': req.user.fitbit.token
+        }, function(err, user) {
+            if (err) return err;
+            var data = JSON.parse(user.fitbit.data);
+            data.stepsovertime = JSON.parse(data.stepsovertime);
+            res.json({
+                fitbitdata: data.stepsovertime
+            })
+        })
     });
 
     // LOGOUT ==============================

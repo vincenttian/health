@@ -1,10 +1,10 @@
 // config/auth.js
 
 // Development
-// var base_url = 'http://localhost:3000';
+var base_url = 'http://localhost:3000';
 
 // Production
-var base_url = 'http://navihealth.herokuapp.com';
+// var base_url = 'http://navihealth.herokuapp.com';
 
 module.exports = {
 
@@ -31,12 +31,12 @@ module.exports = {
         'clientSecret': '546f759f293c4f96949d1d9bdaaeec69',
         'callbackURL': base_url + '/auth/fitbit/callback'
     },
-    'jawboneAuth' : {
-	       'clientID' 	  : 'iSXzETyUd3o', // your App ID
-	       'clientSecret' 	  : 'e41676deb8ac04bfe08a4ae30960758f', // your App Secret
-	       'authorizationURL' : 'https://jawbone.com/auth/oauth2/auth',
-	       'tokenURL'         : 'https://jawbone.com/auth/oauth2/token',
-	       'callbackURL' 	  : base_url + '/auth/jawbone/callback'
-	},
+    'jawboneAuth': {
+        'clientID': 'iSXzETyUd3o', // your App ID
+        'clientSecret': 'e41676deb8ac04bfe08a4ae30960758f', // your App Secret
+        'authorizationURL': 'https://jawbone.com/auth/oauth2/auth',
+        'tokenURL': 'https://jawbone.com/auth/oauth2/token',
+        'callbackURL': base_url + '/auth/jawbone/callback'
+    },
 
 };
